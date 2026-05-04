@@ -2,6 +2,7 @@ package com.github.souzaraphael.api_carros.models;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -16,6 +17,10 @@ public class Carro {
     private Long id;
     private String nome;
     private BigDecimal preco;
+    @Column(name = "tipo_motor", nullable = false)
+    private String tipoMotor;
+    @Column(name = "qtde_portas")
+    private String qtdePortas;
 
     public Carro setId(Long id) {
         this.id = id;

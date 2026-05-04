@@ -1,6 +1,7 @@
 package com.github.souzaraphael.api_carros.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,19 +20,18 @@ import com.github.souzaraphael.api_carros.repositories.RepositoryCarro;
 
 @RestController
 @RequestMapping("carros")
-public class CarrosController {
-    // @GetMapping("listar")
-    // public String listarCarros() {
-        //     return "uno, civic, toro";
-        // }
-        
-        // @GetMapping("precos")
-        // public String listarPrecos() {
-            //     return "1000, 500, 2000 (bons precos ;])";
-            // }
-            
+public class CarroController {
     @Autowired
     private RepositoryCarro repository;
+
+    @GetMapping("/{id}")
+    private ResponseEntity<Carro> findById(@PathVariable Long id) {
+        Optional<Carro> optCarro = repository.findById(id);
+
+        return optCarro.isPresent()
+                ? ResponseEntity.ok(optCarro.get())
+                : ResponseEntity.notFound().build();
+    }
 
     @GetMapping
     private ResponseEntity<List<Carro>> findAll() {
@@ -43,14 +43,14 @@ public class CarrosController {
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(carro));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     private ResponseEntity<Carro> update(@PathVariable Long id, @RequestBody Carro carro) {
         return repository.findById(id).isPresent()
                 ? ResponseEntity.ok(repository.save(carro.setId(id)))
                 : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     private ResponseEntity<Void> delete(@PathVariable Long id) {
         if (repository.findById(id).isPresent()) {
             repository.deleteById(id);

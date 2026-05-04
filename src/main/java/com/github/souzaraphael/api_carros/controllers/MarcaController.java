@@ -1,7 +1,9 @@
 package com.github.souzaraphael.api_carros.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.github.souzaraphael.api_carros.models.Carro;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +21,19 @@ import com.github.souzaraphael.api_carros.repositories.RepositoryMarca;
 
 @RestController
 @RequestMapping("marcas")
-public class MarcasController {
-    // @GetMapping("listar")
-    // public String listarMarcas() {
-    //     return "honda, fiat, hyundai";
-    // }
+public class MarcaController {
 
     @Autowired
     private RepositoryMarca repository;
+
+    @GetMapping("/{id}")
+    private ResponseEntity<Marca> findById(@PathVariable Long id) {
+        Optional<Marca> optMarca = repository.findById(id);
+
+        return optMarca.isPresent()
+                ? ResponseEntity.ok(optMarca.get())
+                : ResponseEntity.notFound().build();
+    }
 
     @GetMapping
     private ResponseEntity<List<Marca>> findAll() {
@@ -38,14 +45,14 @@ public class MarcasController {
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(marca));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     private ResponseEntity<Marca> update(@PathVariable Long id, @RequestBody Marca marca) {
         return repository.findById(id).isPresent()
                 ? ResponseEntity.ok(repository.save(marca.setId(id)))
                 : ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     private ResponseEntity<Void> delete(@PathVariable Long id) {
         if (repository.findById(id).isPresent()) {
             repository.deleteById(id);
